@@ -85,7 +85,7 @@ Router::put(
 ```
 
 Notes:
-- In parameters in the path patterns can have 4 types:
+- In the path parameters, patterns can have 4 types:
     - **string**, **int**, **float**, **bool**
     - To have additional types, just use "string" and do the type
         conversion in the action.
@@ -123,7 +123,7 @@ try {
 
 Notes:
 - The first parameter of Router::route() defines the path to the
-    controller directory. Use a way similar this the above to define
+    controller directory. Use a way similar to the above, to define
     the path in a relative way.
 - The second parameter of Router::route() command expects the
     name of the default controller, which is called when no controller
