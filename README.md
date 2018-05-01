@@ -2,6 +2,8 @@
 
 Simple and flexible router library for web and command line applications.
 
+Packagist page: https://packagist.org/packages/tbolner/flex-php-router
+
 ## Installation
 
 Include the library in the *composer.json* file of your project:
