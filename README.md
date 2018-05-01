@@ -8,11 +8,13 @@ Packagist page: https://packagist.org/packages/tbolner/flex-php-router
 
 Include the library in the *composer.json* file of your project:
 
-    {
-        "require": {
-            "tbolner/flex-php-router": "dev-master"
-        }
+```json
+{
+    "require": {
+        "tbolner/flex-php-router": "dev-master"
     }
+}
+```
 
 Then execute:
 
@@ -50,35 +52,37 @@ These matching parts are called "actions".
 
 - project1/src/Controller/items.php
 
-        <?php declare(strict_types=1);
+```php
+<?php declare(strict_types=1);
 
-        namespace MyProject\Controller;
+namespace MyProject\Controller;
 
-        use FlexPhpRouter\Router;
+use FlexPhpRouter\Router;
 
-        Router::get(
-            "items/{id:int}",
-            function (int $id) {
-                /* ... your code ... */
-                /* you can also throw exceptions to
-                    catch them at your router start-up
-                    code */
-            }
-        );
+Router::get(
+    "items/{id:int}",
+    function (int $id) {
+        /* ... your code ... */
+        /* you can also throw exceptions to
+            catch them at your router start-up
+            code */
+    }
+);
 
-        Router::post(
-            "items/{id:int}/list",
-            function (int $id) {
-                /* ... your code ... */
-            }
-        );
+Router::post(
+    "items/{id:int}/list",
+    function (int $id) {
+        /* ... your code ... */
+    }
+);
 
-        Router::put(
-            "items/{id:int}/details{other:string}",
-            function (int $id, string $other) {
-                /* ... your code ... */
-            }
-        );
+Router::put(
+    "items/{id:int}/details{other:string}",
+    function (int $id, string $other) {
+        /* ... your code ... */
+    }
+);
+```
 
 Notes:
 - In parameters in the path patterns can have 4 types:
@@ -98,22 +102,24 @@ Finally add the router start-up code to your application:
 
 - project1/web/index.php
 
-        <?php declare(strict_types=1);
+```php
+<?php declare(strict_types=1);
 
-        namespace Web;
+namespace Web;
 
-        use FlexPhpRouter\Router;
-        use MyProject\Exceptions\MySpecialException;
+use FlexPhpRouter\Router;
+use MyProject\Exceptions\MySpecialException;
 
-        require_once (dirname(__FILE__)."/../vendor/autoload.php");
+require_once (dirname(__FILE__)."/../vendor/autoload.php");
 
-        try {
-            Router::route(dirname(__FILE__)."/../src/Controller", 'default');
-        } catch (MySpecialException $ex) {
-            /* ... */
-        } catch (\Exception $ex) {
-            /* ... */
-        }
+try {
+    Router::route(dirname(__FILE__)."/../src/Controller", 'default');
+} catch (MySpecialException $ex) {
+    /* ... */
+} catch (\Exception $ex) {
+    /* ... */
+}
+```
 
 Notes:
 - The first parameter of Router::route() defines the path to the
@@ -146,50 +152,54 @@ Example controller:
 
 - project1/src/CLI/test.php:
 
-        <?php declare(strict_types=1);
+```php
+<?php declare(strict_types=1);
 
-        namespace MyProject/CLI;
+namespace MyProject/CLI;
 
-        use FlexPhpRouter\Router;
-        use FlexPhpRouter\CliParameter;
+use FlexPhpRouter\Router;
+use FlexPhpRouter\CliParameter;
 
-        Router::cli("test/cleanup")
-            ->matchRoute(function () {
-                /* ... your code ... */
-                /* you can also throw exceptions to
-                    catch them at your router start-up
-                    code */
-            });
+Router::cli("test/cleanup")
+    ->matchRoute(function () {
+        /* ... your code ... */
+        /* you can also throw exceptions to
+            catch them at your router start-up
+            code */
+    });
 
-        Router::cli("test/run")
-            ->addParameter("param1", CliParameter::TYPE_INT, true, "Description of first parameter.")
-            ->addParameter("param2", CliParameter::TYPE_STRING, false, "Description of second parameter.")
-            ->matchRoute(function (int $param1, string $param2 = null) {
-                /* ... your code ... */
-            });
+Router::cli("test/run")
+    ->addParameter("param1", CliParameter::TYPE_INT, true, "Description of first parameter.")
+    ->addParameter("param2", CliParameter::TYPE_STRING, false, "Description of second parameter.")
+    ->matchRoute(function (int $param1, string $param2 = null) {
+        /* ... your code ... */
+    });
+```
 
 In this case the router start-up code has to go into a not web related
 PHP file (so it should be outside of the web folder). For example:
 
 - project1/console.php:
 
-        #!/usr/bin/php
-        <?php declare(strict_types=1);
+```php
+#!/usr/bin/php
+<?php declare(strict_types=1);
 
-        namespace CLI;
+namespace CLI;
 
-        use FlexPhpRouter\Router;
-        use MyProject\Exceptions\MySpecialException;
+use FlexPhpRouter\Router;
+use MyProject\Exceptions\MySpecialException;
 
-        require_once (dirname(__FILE__)."/vendor/autoload.php");
+require_once (dirname(__FILE__)."/vendor/autoload.php");
 
-        try {
-            Router::route(dirname(__FILE__)."/src/CLI", 'default');
-        } catch (MySpecialException $ex) {
-            /* ... */
-        } catch (\Exception $ex) {
-            /* ... */
-        }
+try {
+    Router::route(dirname(__FILE__)."/src/CLI", 'default');
+} catch (MySpecialException $ex) {
+    /* ... */
+} catch (\Exception $ex) {
+    /* ... */
+}
+```
 
 Notes:
 
