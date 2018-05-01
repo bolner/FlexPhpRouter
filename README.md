@@ -8,13 +8,13 @@ Include the library in the *composer.json* file of your project:
 
     {
         "require": {
-            "tbolner/FlexPhpRouter": "master"
+            "tbolner/FlexPhpRouter": "dev-master"
         }
     }
 
 Then execute:
 
-    composer install
+    composer update
 
 This library requires PHP 7.1 or newer.
 
@@ -167,7 +167,7 @@ Example controller:
             });
 
 In this case the router start-up code has to go into a not web related
-PHP file (so is should be outside of the web folder). For example:
+PHP file (so it should be outside of the web folder). For example:
 
 - project1/console.php:
 
@@ -205,7 +205,7 @@ Notes:
     keep the code for actions tidy, and also increases the performance of
     the application, since the PHP file for a controller can be found
     in an explicit way. (See "Usage example for web applications" for
-    mor information.)
+    more information.)
 - Type safity. All parameters are casted to the specified types.
 - It doesn't handle output. In most router libraries the action uses the
     **return** command to pass back data to be outputted (For example
