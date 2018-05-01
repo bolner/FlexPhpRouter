@@ -171,6 +171,7 @@ PHP file (so it should be outside of the web folder). For example:
 
 - project1/console.php:
 
+        #!/usr/bin/php
         <?php declare(strict_types=1);
 
         namespace CLI;
