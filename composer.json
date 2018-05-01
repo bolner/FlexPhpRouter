@@ -1,0 +1,29 @@
+{
+  "name": "tbolner/FlexPhpRouter",
+  "description": "Router for web and CLI applications (PHP).",
+  "keywords": [
+    "php",
+    "router",
+    "cli",
+    "web",
+    "url",
+    "uri"
+  ],
+  "authors": [
+    {
+      "name": "Tamas Bolner",
+      "homepage": "http://blog.bolner.hu",
+      "role": "Developer"
+    }
+  ],
+  "license": "Apache-2.0",
+  "type": "library",
+  "require": {
+    "php": ">=7.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "FlexPhpRouter\\": "src/"
+    }
+  }
+}
