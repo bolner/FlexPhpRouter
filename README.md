@@ -10,7 +10,7 @@ Include the library in the *composer.json* file of your project:
 
     {
         "require": {
-            "tbolner/FlexPhpRouter": "dev-master"
+            "tbolner/flex-php-router": "dev-master"
         }
     }
 
