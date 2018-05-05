@@ -4,6 +4,8 @@ Simple and flexible router library for web and command line applications.
 
 Packagist page: https://packagist.org/packages/tbolner/flex-php-router
 
+Recommended IDE: [PhpStorm](https://www.jetbrains.com/phpstorm/)
+
 ## Installation
 
 Include the library in the *composer.json* file of your project:
@@ -225,6 +227,7 @@ Notes:
     an array as a JSON). I found that this causes more problems on
     the long run than it solves. Better put the I/O functionality
     into a separate library, and call its methods from your controllers.
+    See example: [FlexPhpIO](https://github.com/bolner/FlexPhpIO).
 - It only supports an "any" method specifier, but doesn't support multiple
     (specific) methods (like POST+GET) per action,
     because those are so rarely required, that it doesn't worth messing
