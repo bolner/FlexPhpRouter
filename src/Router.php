@@ -115,7 +115,7 @@ class Router {
     /**
      * @param string $uriMask
      * @param callable $function
-     * @throws \Exception
+     * @noinspection PhpUnhandledExceptionInspection
      */
     public static function get(string $uriMask, callable $function) {
         self::parseUriParameters('GET', $uriMask, $function);
@@ -124,7 +124,7 @@ class Router {
     /**
      * @param string $uriMask
      * @param callable $function
-     * @throws \Exception
+     * @noinspection PhpUnhandledExceptionInspection
      */
     public static function post(string $uriMask, callable $function) {
         self::parseUriParameters('POST', $uriMask, $function);
@@ -133,7 +133,7 @@ class Router {
     /**
      * @param string $uriMask
      * @param callable $function
-     * @throws \Exception
+     * @noinspection PhpUnhandledExceptionInspection
      */
     public static function put(string $uriMask, callable $function) {
         self::parseUriParameters('PUT', $uriMask, $function);
@@ -142,7 +142,7 @@ class Router {
     /**
      * @param string $uriMask
      * @param callable $function
-     * @throws \Exception
+     * @noinspection PhpUnhandledExceptionInspection
      */
     public static function any(string $uriMask, callable $function) {
         self::parseUriParameters('ANY', $uriMask, $function);
@@ -151,7 +151,7 @@ class Router {
     /**
      * @param string $uriMask
      * @param callable $function
-     * @throws \Exception
+     * @noinspection PhpUnhandledExceptionInspection
      */
     public static function delete(string $uriMask, callable $function) {
         self::parseUriParameters('DELETE', $uriMask, $function);
@@ -162,7 +162,7 @@ class Router {
      *
      * @param string $uriMask
      * @param callable $function
-     * @throws \Exception
+     * @noinspection PhpUnhandledExceptionInspection
      */
     public static function patch(string $uriMask, callable $function) {
         self::parseUriParameters('PATCH', $uriMask, $function);
