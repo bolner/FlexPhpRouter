@@ -81,34 +81,62 @@ class Router {
             $main = $default_controller;
         }
 
-        $controller = realpath("{$controller_dir}/{$main}.php");
+        $current = $main;
 
-        if (!is_string($controller)) {
-            if ($main != $default_controller) {
-                $main = $default_controller;
-                $controller = realpath("{$controller_dir}/{$main}.php");
+        while (true) {
+            // TODO
 
-                if (!is_string($controller)) {
+            $controller = realpath("{$controller_dir}/{$current}.php");
+            $found = true;
+
+            if (!is_string($controller)) {
+                if ($current != $default_controller) {
+                    $current = $default_controller;
+                    $controller = realpath("{$controller_dir}/{$current}.php");
+
+                    if (!is_string($controller)) {
+                        $found = false;
+                    }
+                } else {
+                    $found = false;
+                }
+            }
+
+            if (!$found) {
+                if ($current != $default_controller) {
+                    $current = $default_controller;
+                    continue;
+                } else {
                     throw new \Exception("Unknown route. Controller '{$main}' not found.");
                 }
-            } else {
-                throw new \Exception("Unknown route. Controller '{$main}' not found.");
             }
-        }
 
-        self::$selected_controller = $main;
+            self::$selected_controller = $current;
 
-        require ($controller);
+            require($controller);
 
-        /*
-         * If this point is reached, then no action was executed.
-         */
-        if (php_sapi_name() == "cli") {
-            if (!CliCatcher::isActionFound()) {
-                throw new \Exception("No matching action found in CLI controller '{$main}'. Please double check the path, provided in the first parameter.");
+            /*
+             * If this point is reached, then no action was executed.
+             */
+            if (php_sapi_name() == "cli") {
+                if (!CliCatcher::isActionFound()) {
+                    if ($current == $default_controller) {
+                        throw new \Exception("No matching action found in CLI controller '{$main}'. Please double check the path, provided in the first parameter.");
+                    } else {
+                        $current = $default_controller;
+                        continue;
+                    }
+                }
+            } elseif (!self::$action_found) {
+                if ($current == $default_controller) {
+                    throw new \Exception("No matching action found in controller '{$main}'. Please double check the HTTP request method and the URI.");
+                } else {
+                    $current = $default_controller;
+                    continue;
+                }
             }
-        } elseif (!self::$action_found) {
-            throw new \Exception("No matching action found in controller '{$main}'. Please double check the HTTP request method and the URI.");
+            
+            break;
         }
     }
 
@@ -213,6 +241,12 @@ class Router {
             }
         }
 
+        if ($uriMask == "*") {
+            self::$action_found = true;
+            self::callAction([], $function);
+            return;
+        }
+
         try {
             $uri = $_SERVER["REQUEST_URI"];
             $qm_pos = strpos($uri, '?');
@@ -276,7 +310,6 @@ class Router {
         }
 
         self::callAction($parameters, $function);
-
         self::$action_found = true;
     }
 }
