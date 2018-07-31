@@ -52,8 +52,7 @@ of the URL are unaffected by this mechanism.)
 The controller will match for patters to decide what to execute.
 These matching parts are called "actions".
 
-- project1/src/Controller/items.php
-
+**project1/src/Controller/items.php**
 ```php
 <?php declare(strict_types=1);
 
@@ -102,8 +101,7 @@ Notes:
 
 Finally add the router start-up code to your application:
 
-- project1/web/index.php
-
+**project1/web/index.php**
 ```php
 <?php declare(strict_types=1);
 
@@ -134,6 +132,66 @@ Notes:
 - Handle all exceptions which you would throw in the controllers or
     in code invoked from the controllers.
 
+## Features
+
+### API path prefix
+
+The 3rd parameter of Router::route(...) specifies an API prefix, which
+will always get ignored during the routing process, like if it was cut off
+from the beginning of the URI.
+
+Example:
+
+    Router::route(dirname(__FILE__)."/../src/Controller", 'default', 'api');
+
+|Example URL|Controller path|
+|---|---|
+|http://host/api/items/12| project1/src/Controller/items.php|
+|http://host/api/other/list| project1/src/Controller/other.php|
+
+Notes:
+- The previous example works also with the following prefixes: '/api', 'api/', '/api/'. 
+
+### Default page / 404 page
+
+The default controller (described earlier) is called in two cases:
+- If no controller was found, based on the first part of the URI
+- If none of the actions had matching pattern inside the loaded controller
+
+As a result we can always put an action at the end of the default, which is
+called when nothing got executed.
+
+**Controller/default.php**
+```php
+<?php declare(strict_types=1);
+
+namespace Controller;
+
+use FlexPhpIO\Response;
+use FlexPhpRouter\Router;
+
+Router::any(
+    "/",
+    function () {
+        Response::printJson([
+            "message" => "This is the site root."
+        ]);
+    }
+);
+
+Router::any(
+    "*",
+    function () {
+        Response::printHtmlFile(dirname(__FILE__).'/../web/notFound.html', 404);
+    }
+);
+```
+
+Notes:
+- Notice the "*" character in the last action. It means 'any'.
+- The first action - which handles a site root request - works also with an empty pattern: "".
+
+
 ## Usage example for CLI applications
 
 Create a folder in your project, to contain the CLI controllers.
@@ -152,8 +210,7 @@ of the path passed as first parameter:
 
 Example controller:
 
-- project1/src/CLI/test.php:
-
+**project1/src/CLI/test.php**
 ```php
 <?php declare(strict_types=1);
 
@@ -181,8 +238,7 @@ Router::cli("test/run")
 In this case the router start-up code has to go into a not web related
 PHP file (so it should be outside of the web folder). For example:
 
-- project1/console.php:
-
+**project1/console.php**
 ```php
 #!/usr/bin/php
 <?php declare(strict_types=1);

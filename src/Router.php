@@ -36,11 +36,17 @@ class Router {
     private static $action_found = false;
 
     /**
+     * @var string|null
+     */
+    private static $uri = null;
+
+    /**
      * @param string $controller_dir
      * @param string $default_controller
+     * @param string $apiPrefix
      * @throws \Exception
      */
-    public static function route(string $controller_dir, string $default_controller) {
+    public static function route(string $controller_dir, string $default_controller, string $apiPrefix = "") {
         if (php_sapi_name() == "cli") {
             global $argc, $argv;
 
@@ -64,6 +70,16 @@ class Router {
         }
         $uri = preg_replace('/[^a-z0-9\-_\/]/i', '', $uri);
         $uri = preg_replace('/^\//i', '', $uri); // remove starting slash
+
+        if ($apiPrefix != "") {
+            $apiPrefix = preg_replace('/^\//i', '', $apiPrefix); // remove starting slash
+            if (substr($uri, 0, strlen($apiPrefix)) == $apiPrefix) {
+                $uri = substr($uri, strlen($apiPrefix));
+                $uri = preg_replace('/^\//i', '', $uri); // remove starting slash
+            }
+        }
+
+        self::$uri = '/'.$uri;
         $pos = strpos($uri, '/');
 
         /*
@@ -235,6 +251,10 @@ class Router {
             return;
         }
 
+        if (!is_string(self::$uri)) {
+            throw new \Exception("A controller got executed without a call to Router::route(...).");
+        }
+
         if ($http_method != 'ANY') {
             if ($_SERVER['REQUEST_METHOD'] !== $http_method) {
                 return;
@@ -248,7 +268,7 @@ class Router {
         }
 
         try {
-            $uri = $_SERVER["REQUEST_URI"];
+            $uri = self::$uri;
             $qm_pos = strpos($uri, '?');
             if ($qm_pos !== false) {
                 $uri = substr($uri, 0, $qm_pos);
