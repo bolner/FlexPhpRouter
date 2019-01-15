@@ -31,6 +31,11 @@ class CliCatcher {
     private $path;
 
     /**
+     * @var string
+     */
+    private $description;
+
+    /**
      * @var CliParameter[]
      */
     private $parameters;
@@ -38,10 +43,14 @@ class CliCatcher {
     /**
      * CliCatcher constructor.
      * @param string $path
+     * @param string $description
      */
-    public function __construct(string $path)
+    public function __construct(string $path, string $description = "")
     {
         $this->path = $path;
+        $this->description = $description;
+
+        Doc::registerCliControl($path, $description);
     }
 
     /**
@@ -68,6 +77,8 @@ class CliCatcher {
 
         $this->parameters[$name] = $param;
 
+        Doc::registerCliParameter($this->path, $name, $type, $isRequired, $description);
+
         return $this;
     }
 
@@ -82,7 +93,7 @@ class CliCatcher {
 
         global $argc, $argv;
 
-        if (trim($argv[1]) != $this->path) {
+        if (@trim((string)$argv[1]) != $this->path) {
             // No match
             return;
         }

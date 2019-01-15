@@ -51,7 +51,8 @@ class Router {
             global $argc, $argv;
 
             if ($argc < 2) {
-                throw new \Exception("Please supply the command path in the first parameter.");
+                self::displayHelp($controller_dir);
+                return;
             }
 
             $uri = $argv[1];
@@ -214,10 +215,11 @@ class Router {
 
     /**
      * @param string $path
+     * @param string $description
      * @return CliCatcher
      */
-    public static function cli(string $path): CliCatcher {
-        return new CliCatcher($path);
+    public static function cli(string $path, string $description = ""): CliCatcher {
+        return new CliCatcher($path, $description);
     }
 
     /**
@@ -331,5 +333,21 @@ class Router {
 
         self::callAction($parameters, $function);
         self::$action_found = true;
+    }
+
+    /**
+     * @param string $controllerDir
+     */
+    private static function displayHelp(string $controllerDir) {
+        $controllers = glob($controllerDir."/*.php");
+        self::$action_found = true;
+
+        foreach ($controllers as $controller) {
+            include_once($controller);
+        }
+
+        $doc = Doc::getCliDoc();
+
+        echo "\n{$doc}\n";
     }
 }
