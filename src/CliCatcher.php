@@ -49,6 +49,7 @@ class CliCatcher {
     {
         $this->path = $path;
         $this->description = $description;
+        $this->parameters = [];
 
         Doc::registerCliControl($path, $description);
     }
