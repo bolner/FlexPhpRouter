@@ -101,8 +101,6 @@ class Router {
         $current = $main;
 
         while (true) {
-            // TODO
-
             $controller = realpath("{$controller_dir}/{$current}.php");
             $found = true;
 
@@ -124,7 +122,7 @@ class Router {
                     $current = $default_controller;
                     continue;
                 } else {
-                    throw new \Exception("Unknown route. Controller '{$main}' not found.");
+                    throw new \Exception("Unknown route. Controller '{$uri}' not found.");
                 }
             }
 
