@@ -136,20 +136,22 @@ Notes:
 
 You can pass an optional callback as the fourth parameter of `Router::route()`:
 
-    class MyAuthClass {
-        public static function authenticate(bool $isWeb, string $path) {
-            ...
-        }
+```php
+class MyAuthClass {
+    public static function authenticate(bool $isWeb, string $path) {
+        ...
     }
-    
-    ...
-    
-        Router::route(dirname(__FILE__)."/../src/Controller", 'default',
-            '',     // The third parameter is the API prefix
-            [MyAuthClass::class, 'authenticate']
-        );
-    
-    ...
+}
+
+...
+
+    Router::route(dirname(__FILE__)."/../src/Controller", 'default',
+        '',     // The third parameter is the API prefix
+        [MyAuthClass::class, 'authenticate']
+    );
+
+...
+```
 
 It will be executed before any controller code, with the knowledge of the
 selected controller path.
