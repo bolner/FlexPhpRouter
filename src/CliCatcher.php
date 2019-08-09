@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /*
- * Copyright 2018 Tamas Bolner
+ * Copyright 2018-2019 Tamas Bolner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -148,6 +148,7 @@ class CliCatcher {
             }
         }
 
+        Router::callBeforeExecCallback(false, $this->path);
         call_user_func_array($function, $pass_params);
 
         self::$action_found = true;

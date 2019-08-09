@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /*
- * Copyright 2018 Tamas Bolner
+ * Copyright 2018-2019 Tamas Bolner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,12 +41,22 @@ class Router {
     private static $uri = null;
 
     /**
+     * @var array
+     */
+    private static $beforeExecEvent = null;
+
+    /**
      * @param string $controller_dir
      * @param string $default_controller
      * @param string $apiPrefix
+     * @param array $beforeExecEvent
      * @throws \Exception
      */
-    public static function route(string $controller_dir, string $default_controller, string $apiPrefix = "") {
+    public static function route(string $controller_dir, string $default_controller, string $apiPrefix = "",
+            array $beforeExecEvent = null) {
+
+        self::$beforeExecEvent = $beforeExecEvent;
+
         if (php_sapi_name() == "cli") {
             global $argc, $argv;
 
@@ -263,6 +273,7 @@ class Router {
 
         if ($uriMask == "*") {
             self::$action_found = true;
+            self::callBeforeExecCallback(true, self::$uri);
             self::callAction([], $function);
             return;
         }
@@ -329,6 +340,7 @@ class Router {
             throw new \Exception("Controller: '".self::$selected_controller."', Action: '{$http_method} {$uriMask}'. Error message: ".$ex->getMessage());
         }
 
+        self::callBeforeExecCallback(true, self::$uri);
         self::callAction($parameters, $function);
         self::$action_found = true;
     }
@@ -347,5 +359,15 @@ class Router {
         $doc = Doc::getCliDoc();
 
         echo "\n{$doc}\n";
+    }
+
+    /**
+     * @param bool $isWeb
+     * @param string $path
+     */
+    public static function callBeforeExecCallback(bool $isWeb, string $path) {
+        if (self::$beforeExecEvent !== null) {
+            call_user_func_array(self::$beforeExecEvent, [$isWeb, $path]);
+        }
     }
 }

@@ -132,6 +132,37 @@ Notes:
 - Handle all exceptions which you would throw in the controllers or
     in code invoked from the controllers.
 
+### Path-dependent authentication and more
+
+You can pass an optional callback as the fourth parameter of `Router::route()`:
+
+    class MyAuthClass {
+        public static function authenticate(bool $isWeb, string $path) {
+            ...
+        }
+    }
+    
+    ...
+    
+        Router::route(dirname(__FILE__)."/../src/Controller", 'default',
+            '',     // The third parameter is the API prefix
+            [MyAuthClass::class, 'authenticate']
+        );
+    
+    ...
+
+It will be executed before any controller code, with the knowledge of the
+selected controller path.
+The callback receives 2 parameters. The first '$isWeb' is true when a web
+controller gets executed and false when a CLI. The second tells which path
+was selected.
+
+This feature allows you to implement authentication for a selection of
+API entries. The recommendation is that in case of an auth failure,
+throw an exception created by you, for example: `MyAuthException`, and
+handle it at the main entry point, where normally all exceptions are
+caught. 
+
 ## Features
 
 ### API path prefix
