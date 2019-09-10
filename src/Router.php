@@ -271,27 +271,30 @@ class Router {
             }
         }
 
+        /*
+         * Normalize some parameters
+         */
+        $uri = self::$uri;
+        if ($uriMask[0] != '/') {
+            $uriMask = '/'.$uriMask;
+        }
+
+        // Remove the ending slashes from both
+        $uri = preg_replace('/[\/]+$/', '', $uri);
+        $uriMask = preg_replace('/[\/]+$/', '', $uriMask);
+
         if ($uriMask == "*") {
             self::$action_found = true;
-            self::callBeforeExecCallback(true, self::$uri);
+            self::callBeforeExecCallback(true, $uri);
             self::callAction([], $function);
             return;
         }
 
         try {
-            $uri = self::$uri;
             $qm_pos = strpos($uri, '?');
             if ($qm_pos !== false) {
                 $uri = substr($uri, 0, $qm_pos);
             }
-
-            if ($uriMask[0] != '/') {
-                $uriMask = '/'.$uriMask;
-            }
-
-            // Remove the ending slashes from both
-            $uri = preg_replace('/[\/]+$/', '', $uri);
-            $uriMask = preg_replace('/[\/]+$/', '', $uriMask);
 
             $parts = preg_split('/[\{\}]{1,1}/', $uriMask);
 
@@ -340,7 +343,7 @@ class Router {
             throw new \Exception("Controller: '".self::$selected_controller."', Action: '{$http_method} {$uriMask}'. Error message: ".$ex->getMessage());
         }
 
-        self::callBeforeExecCallback(true, self::$uri);
+        self::callBeforeExecCallback(true, $uri);
         self::callAction($parameters, $function);
         self::$action_found = true;
     }
