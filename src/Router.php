@@ -41,6 +41,7 @@ class Router {
     private static $uri = null;
 
     /**
+     * Callback function that is called before executing a controller.
      * @var array
      */
     private static $beforeExecEvent = null;
