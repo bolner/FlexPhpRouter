@@ -272,23 +272,28 @@ class Router {
             }
         }
 
-        /*
-         * Normalize some parameters
-         */
         $uri = self::$uri;
-        if ($uriMask[0] != '/') {
-            $uriMask = '/'.$uriMask;
-        }
-
-        // Remove the ending slashes from both
-        $uri = preg_replace('/[\/]+$/', '', $uri);
-        $uriMask = preg_replace('/[\/]+$/', '', $uriMask);
 
         if ($uriMask == "*") {
             self::$action_found = true;
             self::callBeforeExecCallback(true, $uri);
             self::callAction([], $function);
             return;
+        }
+
+        /*
+         * Normalize some parameters
+         */
+        // Remove the ending slashes from both
+        $uri = preg_replace('/[\/]+$/', '', $uri);
+        $uriMask = preg_replace('/[\/]+$/', '', $uriMask);
+
+        if (strlen($uriMask) > 0) {
+            if ($uriMask[0] != '/') {
+                $uriMask = '/'.$uriMask;
+            }
+        } else {
+            $uriMask = '/';
         }
 
         try {
