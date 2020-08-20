@@ -18,7 +18,6 @@
 
 namespace FlexPhpRouter;
 
-
 /**
  * Class Router
  * @package Adlib\RenderScheduler\Framework
@@ -288,6 +287,14 @@ class Router {
         $uri = preg_replace('/[\/]+$/', '', $uri);
         $uriMask = preg_replace('/[\/]+$/', '', $uriMask);
 
+        if (strlen($uri) > 0) {
+            if ($uri[0] != '/') {
+                $uri = '/'.$uri;
+            }
+        } else {
+            $uri = '/';
+        }
+
         if (strlen($uriMask) > 0) {
             if ($uriMask[0] != '/') {
                 $uriMask = '/'.$uriMask;
@@ -295,6 +302,11 @@ class Router {
         } else {
             $uriMask = '/';
         }
+
+        /**
+         * @var Parameter[] $parameters
+         */
+        $parameters = [];
 
         try {
             $qm_pos = strpos($uri, '?');
@@ -308,42 +320,43 @@ class Router {
                 throw new \Exception("Syntax error. Not all brackets have a pair.");
             }
 
-            /**
-             * @var Parameter[] $parameters
-             */
-            $parameters = [];
+            if (count($parts) > 1) {
+                /**
+                 * @var string[] $specifiers
+                 */
+                $specifiers = [];
 
-            /**
-             * @var string[] $specifiers
-             */
-            $specifiers = [];
+                foreach ($parts as $index => $part) {
+                    if ($index % 2) {
+                        $param_parts = explode(':', $part);
 
-            foreach ($parts as $index => $part) {
-                if ($index % 2) {
-                    $param_parts = explode(':', $part);
+                        $parameters[] = new Parameter(
+                            $param_parts[0],
+                            @(string)($param_parts[1]),
+                            ''
+                        );
+                    } else {
+                        $specifiers[] = str_replace('/', '\/', preg_quote($part));
+                    }
+                }
 
-                    $parameters[] = new Parameter(
-                        $param_parts[0],
-                        @(string)($param_parts[1]),
-                        ''
-                    );
-                } else {
-                    $specifiers[] = str_replace('/', '\/', preg_quote($part));
+                $match_regex = '/^' . implode('(.*)', $specifiers) . '$/';
+                $matches = [];
+                preg_match($match_regex, $uri, $matches);
+
+                if (count($matches) < 1) {
+                    return;
+                }
+
+                foreach ($parameters as $index => $parameter) {
+                    $parameters[$index]->setValue(@(string)($matches[$index + 1]));
+
+                    $parameter->validate();
                 }
             }
 
-            $match_regex = '/^' . implode('(.*)', $specifiers) . '$/';
-            $matches = [];
-            preg_match($match_regex, $uri, $matches);
-
-            if (count($matches) < 1) {
+            if ($uriMask != $uri) {
                 return;
-            }
-
-            foreach ($parameters as $index => $parameter) {
-                $parameters[$index]->setValue(@(string)($matches[$index + 1]));
-
-                $parameter->validate();
             }
         } catch (\Exception $ex) {
             throw new \Exception("Controller: '".self::$selected_controller."', Action: '{$http_method} {$uriMask}'. Error message: ".$ex->getMessage());
