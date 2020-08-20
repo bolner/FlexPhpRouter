@@ -154,7 +154,11 @@ class Router {
                 }
             } elseif (!self::$action_found) {
                 if ($current == $default_controller) {
-                    throw new \Exception("No matching action found in controller '{$main}'. Please double check the HTTP request method and the URI.");
+                    if ($default_controller == $main) {
+                        throw new \Exception("No matching action found in controller '{$main}'. Please double check the HTTP request method and the URI.");
+                    } else {
+                        throw new \Exception("Unknown route. Controller '{$uri}' not found.");
+                    }
                 } else {
                     $current = $default_controller;
                     continue;
