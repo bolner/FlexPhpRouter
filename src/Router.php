@@ -357,9 +357,7 @@ class Router {
 
                     $parameter->validate();
                 }
-            }
-
-            if ($uriMask != $uri) {
+            } else if ($uriMask != $uri) {
                 return;
             }
         } catch (\Exception $ex) {
